@@ -62,9 +62,9 @@ def test_algorithm(algorithm, intervals, epsilon):
         if a > b:
             a, b = b, a
 
-        start_time = time.time()
+        start_time = time.time() * 1000
         root, steps = algorithm(a, b, func, epsilon)
-        time_taken = time.time() - start_time
+        time_taken = time.time() * 1000 - start_time
         total_steps += steps
         total_time += time_taken
 
@@ -90,7 +90,8 @@ def generate_random_intervals(num_intervals):
         a = np.random.uniform(-10, 10)
         b = np.random.uniform(-10, 10)
         func = generate_random_function(a, b)
-        func = func if func(a) * func(b) < 0 else generate_random_function(a, b)
+        while func(a) * func(b) >= 0:
+            func = generate_random_function(a, b)
         if a > b:
             a, b = b, a
         intervals.append((func, a, b))
