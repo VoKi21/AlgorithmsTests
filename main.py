@@ -16,6 +16,28 @@ def bisection(a: float, b: float, func, epsilon: float):
     return (a + b) / 2, step_count
 
 
+def chords(a: float, b: float, func, epsilon: float):
+    step_count = 0
+    x = a - epsilon * 2
+    x_prev = x - epsilon * 2
+    fa = func(a)
+    fb = func(b)
+
+    while abs(x - x_prev) > epsilon:
+        x_prev = x
+        x = a - fa * (b - a) / (fb - fa)
+        fx = func(x)
+        if (fx * fa) < 0:
+            b = x
+            fb = fx
+        else:
+            a = x
+            fa = fx
+        step_count += 1
+
+    return x, step_count
+
+
 # Test function for any root-finding algorithm
 def test_algorithm(algorithm, intervals, epsilon):
     total_steps = 0
@@ -38,24 +60,23 @@ def test_algorithm(algorithm, intervals, epsilon):
     return avg_steps, avg_time
 
 
-# Generate random functions
-def generate_random_function():
-    a = np.random.uniform(-100, 100)
-    b = np.random.uniform(-100, 100)
-    c = np.random.uniform(-100, 100)
-    d = np.random.uniform(-100, 100)
-    e = np.random.uniform(-100, 100)
-
-    return lambda x: a * x**4 + b * x**3 + c * x**2 + d * x + e
+def generate_random_function(a, b):
+    # Choose a random root within the interval [a, b]
+    root = np.random.uniform(a, b)
+    # Generate random coefficients for the polynomial
+    coefficients = np.random.uniform(-100, 100, size=5)
+    # Define the polynomial function using the chosen root and coefficients
+    return lambda x: np.polyval(coefficients, x) * (x - root)
 
 
 # Generate random intervals
 def generate_random_intervals(num_intervals):
     intervals = []
     for _ in range(num_intervals):
-        func = generate_random_function()
         a = np.random.uniform(-10, 10)
         b = np.random.uniform(-10, 10)
+        func = generate_random_function(a, b)
+        func = func if func(a) * func(b) < 0 else generate_random_function(a, b)
         if a > b:
             a, b = b, a
         intervals.append((func, a, b))
@@ -63,7 +84,12 @@ def generate_random_intervals(num_intervals):
 
 
 if __name__ == '__main__':
-    random_intervals = generate_random_intervals(10000)
+    random_intervals = generate_random_intervals(100)
     eps = 1e-6
+
     bisection_steps, bisection_time = test_algorithm(bisection, random_intervals, eps)
-    print(f"Bisection: average step count: {bisection_steps}, average time in seconds: {bisection_time}")
+    print(f"Bisection: average step count: {bisection_steps}, average time in ms: {bisection_time}")
+
+    chords_steps, chords_time = test_algorithm(chords, random_intervals, eps)
+    print(f"Chords method: average step count: {chords_steps}, average time in ms: {chords_time}")
+
