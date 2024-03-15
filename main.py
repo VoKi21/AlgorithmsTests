@@ -38,6 +38,20 @@ def chords(a: float, b: float, func, epsilon: float):
     return x, step_count
 
 
+def newton(a: float, b: float, func, epsilon: float):
+    step_count = 0
+    x = (a + b) / 2  # Initial guess (midpoint of the interval)
+    while True:
+        fx = func(x)
+        f_prime_x = (func(x + epsilon) - fx) / epsilon  # Approximation of the derivative
+        x_next = x - fx / f_prime_x
+        if abs(x_next - x) <= epsilon or step_count >= 1000:  # Convergence criteria
+            break
+        x = x_next
+        step_count += 1
+    return x, step_count
+
+
 # Test function for any root-finding algorithm
 def test_algorithm(algorithm, intervals, epsilon):
     total_steps = 0
@@ -89,7 +103,9 @@ if __name__ == '__main__':
 
     bisection_steps, bisection_time = test_algorithm(bisection, random_intervals, eps)
     print(f"Bisection: average step count: {bisection_steps}, average time in ms: {bisection_time}")
-
+    # I'm not sure is Newton's method so fast because it good or because i have a mistake
+    newton_steps, newton_time = test_algorithm(newton, random_intervals, eps)
+    print(f"Newton's method: average step count: {newton_steps}, average time in ms: {newton_time}")
+    # Chords are really slow for some reason
     chords_steps, chords_time = test_algorithm(chords, random_intervals, eps)
     print(f"Chords method: average step count: {chords_steps}, average time in ms: {chords_time}")
-
