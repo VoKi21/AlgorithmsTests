@@ -45,7 +45,7 @@ def newton(a: float, b: float, func, epsilon: float):
         fx = func(x)
         f_prime_x = (func(x + epsilon) - fx) / epsilon  # Approximation of the derivative
         x_next = x - fx / f_prime_x
-        if abs(x_next - x) <= epsilon:
+        if abs(x_next - x) <= epsilon or step_count > 1000:
             break
         x = x_next
         step_count += 1
