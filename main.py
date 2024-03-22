@@ -45,7 +45,7 @@ def newton(a: float, b: float, func, epsilon: float):
         fx = func(x)
         f_prime_x = (func(x + epsilon) - fx) / epsilon  # Approximation of the derivative
         x_next = x - fx / f_prime_x
-        if abs(x_next - x) <= epsilon or step_count >= 1000:  # Convergence criteria
+        if abs(x_next - x) <= epsilon:
             break
         x = x_next
         step_count += 1
@@ -75,15 +75,11 @@ def test_algorithm(algorithm, intervals, epsilon):
 
 
 def generate_random_function(a, b):
-    # Choose a random root within the interval [a, b]
     root = np.random.uniform(a, b)
-    # Generate random coefficients for the polynomial
     coefficients = np.random.uniform(-100, 100, size=5)
-    # Define the polynomial function using the chosen root and coefficients
     return lambda x: np.polyval(coefficients, x) * (x - root)
 
 
-# Generate random intervals
 def generate_random_intervals(num_intervals):
     intervals = []
     for _ in range(num_intervals):
@@ -104,7 +100,7 @@ if __name__ == '__main__':
 
     bisection_steps, bisection_time = test_algorithm(bisection, random_intervals, eps)
     print(f"Bisection: average step count: {bisection_steps}, average time in ms: {bisection_time}")
-    # I'm not sure is Newton's method so fast because it good or because i have a mistake
+    # I'm not sure is Newton's method so fast because its good or because i have a mistake
     newton_steps, newton_time = test_algorithm(newton, random_intervals, eps)
     print(f"Newton's method: average step count: {newton_steps}, average time in ms: {newton_time}")
     # Chords are really slow for some reason
